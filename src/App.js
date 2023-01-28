@@ -49,19 +49,18 @@ const App = () => {
     setData((data) => [newItem, ...data]); //함수형 업데이트: 상태변화함수에 함수 전달
   }, []);
 
-  const onRemove = (targetId) => {
+  const onRemove = useCallback((targetId) => {
     //    console.log(`${targetId}가 삭제되었습니다.`);
-    const newDiaryList = data.filter((it) => it.id !== targetId);
-    setData(newDiaryList);
-  };
+    setData((data) => data.filter((it) => it.id !== targetId));
+  }, []);
 
-  const onEdit = (targetId, newContent) => {
-    setData(
+  const onEdit = useCallback((targetId, newContent) => {
+    setData((data) =>
       data.map((it) =>
         it.id === targetId ? { ...it, content: newContent } : it
       )
     );
-  };
+  }, []);
 
   //memotization을 이용한 연산 과정 최적화 (동일한 계산은 실행하지 않고 기존의 데이터 반환)
   const getDiaryAnalysis = useMemo(() => {
