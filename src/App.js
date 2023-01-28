@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import DiaryEditor from "./DiaryEditor";
 import DiaryList from "./DiaryList";
@@ -35,7 +35,8 @@ const App = () => {
     getData(); //Mount 시점에 getData() 호출
   }, []);
 
-  const onCreate = (author, content, emotion) => {
+  //useCallback : 메모이제이션된 콜백을 반환
+  const onCreate = useCallback((author, content, emotion) => {
     const created_date = new Date().getTime();
     const newItem = {
       author,
@@ -45,8 +46,8 @@ const App = () => {
       id: dataId.current,
     };
     dataId.current += 1;
-    setData([newItem, ...data]);
-  };
+    setData((data) => [newItem, ...data]); //함수형 업데이트: 상태변화함수에 함수 전달
+  }, []);
 
   const onRemove = (targetId) => {
     //    console.log(`${targetId}가 삭제되었습니다.`);
@@ -62,6 +63,7 @@ const App = () => {
     );
   };
 
+  //memotization을 이용한 연산 과정 최적화 (동일한 계산은 실행하지 않고 기존의 데이터 반환)
   const getDiaryAnalysis = useMemo(() => {
     //    console.log("일기 분석 시작"); //처음 data 생성되고 한번, setData 해서 한번 더 실행됨
 

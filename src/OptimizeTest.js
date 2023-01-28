@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+//React.memo : 함수형 컴포넌트에 업데이트 조건 걸기
 // //React.memo : 해당 props가 바뀔 때만 리렌더링 되도록
 
 // const TextView = React.memo(({ text }) => {
