@@ -9,9 +9,10 @@ const DiaryItem = ({
   emotion,
   id,
 }) => {
-  useEffect(() => {
+  /*  useEffect(() => {
     console.log(`${id}번째 아이템 렌더`);
-  });
+  });//test
+  */
   const [isEdit, setIsEdit] = useState(false); //boolean값, true면 수정 중
   const toggleIsEdit = () => setIsEdit(!isEdit); //boolean값 반전시킴
 
