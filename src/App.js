@@ -1,8 +1,13 @@
-import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from "react";
 import "./App.css";
 import DiaryEditor from "./DiaryEditor";
 import DiaryList from "./DiaryList";
-//import OptimizeTest from "./OptimizeTest";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -29,6 +34,10 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+export const DiaryStateContext = React.createContext();
+
+export const DiaryDispatchContext = React.createContext();
 
 const App = () => {
   //const [data, setData] = useState([]); //state 끌어올리기(단방향 데이터 흐름, 역방향 이벤트 흐름)
@@ -78,6 +87,10 @@ const App = () => {
     dispatch({ type: "EDIT", targetId, newContent });
   }, []);
 
+  const memoizedDispatches = useMemo(() => {
+    return { onCreate, onRemove, onEdit };
+  }, []);
+
   //memotization을 이용한 연산 과정 최적화 (동일한 계산은 실행하지 않고 기존의 데이터 반환)
   const getDiaryAnalysis = useMemo(() => {
     //    console.log("일기 분석 시작"); //처음 data 생성되고 한번, setData 해서 한번 더 실행됨
@@ -91,16 +104,20 @@ const App = () => {
   const { goodCount, badCount, goodRatio } = getDiaryAnalysis; //useMemo 사용하면 더이상 getDiaryAnalysis는 함수가 아니고 콜백함수가 반환하는 값임
 
   return (
-    <div className="App">
-      {/* <Lifecycle /> 
+    <DiaryStateContext.Provider value={data}>
+      <DiaryDispatchContext.Provider value={memoizedDispatches}>
+        <div className="App">
+          {/* <Lifecycle /> 
       <OptimizeTest /> */}
-      <DiaryEditor onCreate={onCreate} />
-      <div>전체 일기 : {data.length}</div>
-      <div>기분 좋은 일기 개수 : {goodCount}</div>
-      <div>기분 나쁜 일기 개수 : {badCount}</div>
-      <div>기분 좋은 일기 비율 : {goodRatio}</div>
-      <DiaryList onEdit={onEdit} onRemove={onRemove} diaryList={data} />
-    </div>
+          <DiaryEditor />
+          <div>전체 일기 : {data.length}</div>
+          <div>기분 좋은 일기 개수 : {goodCount}</div>
+          <div>기분 나쁜 일기 개수 : {badCount}</div>
+          <div>기분 좋은 일기 비율 : {goodRatio}</div>
+          <DiaryList />
+        </div>
+      </DiaryDispatchContext.Provider>
+    </DiaryStateContext.Provider>
   );
 };
 
